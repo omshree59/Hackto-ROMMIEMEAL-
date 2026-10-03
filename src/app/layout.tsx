@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 import { HouseholdProvider } from "@/context/HouseholdContext";
 
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-stone-50 dark:bg-dark-950 text-stone-900 dark:text-stone-100 antialiased font-sans">
+      <body className="min-h-screen bg-app-bg text-stone-200 antialiased font-sans">
         <HouseholdProvider>
           {children}
         </HouseholdProvider>
