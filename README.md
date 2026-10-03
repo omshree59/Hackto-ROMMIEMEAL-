@@ -48,7 +48,7 @@ Because RoomieMeal is entirely API-free and client-side, running it locally is i
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/your-username/roomiemeal.git
+    git clone https://github.com/omshree59/Hackto-ROMMIEMEAL-.git
     cd roomiemeal
     ```
 
