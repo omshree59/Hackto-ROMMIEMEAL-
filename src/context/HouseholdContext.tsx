@@ -80,214 +80,44 @@ export interface HouseholdContextType {
   darkMode: boolean;
   toggleDarkMode: () => void;
   isOffline: boolean;
-  resetToDemoData: () => void;
+  
 }
 
-const DEFAULT_ROOMMATES: Roommate[] = [
-  {
-    id: "alex-01",
-    name: "Alex",
-    avatar: "🥑",
-    color: "#f97316",
-    role: "The Protein Chef",
-    allergies: ["peanuts", "tree_nuts"],
-    intolerances: [],
-    dislikes: [],
-    preferences: ["High-Protein"],
-    favoriteCuisines: ["Mexican", "American"],
-    cookingSkill: "intermediate",
-    notes: "Severe peanut allergy (carries EpiPen). Please keep peanut products off main cutting boards."
-  },
-  {
-    id: "maya-02",
-    name: "Maya",
-    avatar: "🌱",
-    color: "#10b981",
-    role: "Plant Lover",
-    allergies: [],
-    intolerances: ["dairy"],
-    dislikes: [],
-    preferences: ["Vegetarian"],
-    favoriteCuisines: ["Italian", "Indian"],
-    cookingSkill: "enthusiast",
-    notes: "Lactose intolerant & vegetarian. Loves plant-based milk and pasta sauces."
-  },
-  {
-    id: "sam-03",
-    name: "Sam",
-    avatar: "🍜",
-    color: "#8b5cf6",
-    role: "Noodle Fanatic",
-    allergies: [],
-    intolerances: [],
-    dislikes: ["mushrooms"],
-    preferences: [],
-    favoriteCuisines: ["Asian", "Japanese"],
-    cookingSkill: "beginner",
-    notes: "Dislikes all mushrooms. Always down for quick noodle bowls."
-  },
-  {
-    id: "omshree-04",
-    name: "Omshree",
-    avatar: "🍛",
-    color: "#3b82f6",
-    role: "Curry Master",
-    allergies: [],
-    intolerances: [],
-    dislikes: [],
-    preferences: [],
-    favoriteCuisines: ["Indian", "Mediterranean"],
-    cookingSkill: "chef",
-    notes: "No restrictions. Loves rich spice blends and batch cooking."
-  }
-];
+const DEFAULT_ROOMMATES: Roommate[] = [];
 
-const DEFAULT_PANTRY: PantryItem[] = [
-  { id: "p1", name: "Basmati Rice", category: "Grains", quantity: "2", unit: "bags", addedAt: "2026-10-01" },
-  { id: "p2", name: "Chickpeas (canned)", category: "Protein", quantity: "4", unit: "cans", addedAt: "2026-10-01" },
-  { id: "p3", name: "Coconut Milk", category: "Pantry", quantity: "3", unit: "cans", addedAt: "2026-10-01" },
-  { id: "p4", name: "Extra Virgin Olive Oil", category: "Pantry", quantity: "1", unit: "bottle", addedAt: "2026-10-01" },
-  { id: "p5", name: "Garlic", category: "Produce", quantity: "2", unit: "heads", addedAt: "2026-10-02" },
-  { id: "p6", name: "Yellow Onions", category: "Produce", quantity: "5", unit: "pcs", addedAt: "2026-10-02" },
-  { id: "p7", name: "Baby Spinach", category: "Produce", quantity: "1", unit: "box", addedAt: "2026-10-03" },
-  { id: "p8", name: "Diced Tomatoes", category: "Produce", quantity: "3", unit: "cans", addedAt: "2026-10-01" },
-  { id: "p9", name: "Rolled Oats", category: "Grains", quantity: "1", unit: "tub", addedAt: "2026-10-01" },
-  { id: "p10", name: "Black Beans", category: "Protein", quantity: "3", unit: "cans", addedAt: "2026-10-02" },
-];
+const DEFAULT_PANTRY: PantryItem[] = [];
 
-const DEFAULT_SHOPPING: ShoppingItem[] = [
-  {
-    id: "s1",
-    name: "Baby Spinach (Large tub)",
-    category: "Produce",
-    amount: "1 tub (16 oz)",
-    checked: false,
-    assignedRoommateId: "maya-02",
-    mealOriginName: "Golden Chickpea & Spinach Curry",
-    createdAt: "2026-10-03"
-  },
-  {
-    id: "s2",
-    name: "Full-fat Coconut Milk",
-    category: "Pantry & Oils",
-    amount: "2 cans",
-    checked: true,
-    assignedRoommateId: "alex-01",
-    mealOriginName: "Golden Chickpea & Spinach Curry",
-    createdAt: "2026-10-03"
-  },
-  {
-    id: "s3",
-    name: "Brown Rice Rigatoni (Gluten-Free)",
-    category: "Grains & Pasta",
-    amount: "2 boxes",
-    checked: false,
-    assignedRoommateId: "omshree-04",
-    mealOriginName: "Rich Umami Lentil Bolognese",
-    createdAt: "2026-10-03"
-  },
-  {
-    id: "s4",
-    name: "Fresh Limes & Cilantro",
-    category: "Produce",
-    amount: "4 limes, 1 bunch cilantro",
-    checked: false,
-    assignedRoommateId: "sam-03",
-    mealOriginName: "Fiesta Lime Chicken Fajita Bowl",
-    createdAt: "2026-10-03"
-  },
-  {
-    id: "s5",
-    name: "Extra Firm Organic Tofu",
-    category: "Protein",
-    amount: "2 blocks",
-    checked: false,
-    assignedRoommateId: "maya-02",
-    isCustom: true,
-    createdAt: "2026-10-03"
-  }
-];
+const DEFAULT_SHOPPING: ShoppingItem[] = [];
 
 const STORAGE_KEYS = {
-  HOUSEHOLD_NAME: "roomiemeal_household_name_v1",
-  ROOMMATES: "roomiemeal_roommates_v1",
-  ACTIVE_ROOMMATE_ID: "roomiemeal_active_roommate_id_v1",
-  FAVORITES: "roomiemeal_favorites_v1",
-  WEEKLY_PLAN: "roomiemeal_weekly_plan_v1",
-  TONIGHT_MEAL_ID: "roomiemeal_tonight_meal_id_v1",
-  SHOPPING_LIST: "roomiemeal_shopping_list_v1",
-  PANTRY_ITEMS: "roomiemeal_pantry_items_v1",
-  MEAL_HISTORY: "roomiemeal_meal_history_v1",
-  POLL: "roomiemeal_active_poll_v1",
-  DARK_MODE: "roomiemeal_dark_mode_v1",
+  HOUSEHOLD_NAME: "roomiemeal_household_name_v2",
+  ROOMMATES: "roomiemeal_roommates_v2",
+  ACTIVE_ROOMMATE_ID: "roomiemeal_active_roommate_id_v2",
+  FAVORITES: "roomiemeal_favorites_v2",
+  WEEKLY_PLAN: "roomiemeal_weekly_plan_v2",
+  TONIGHT_MEAL_ID: "roomiemeal_tonight_meal_id_v2",
+  SHOPPING_LIST: "roomiemeal_shopping_list_v2",
+  PANTRY_ITEMS: "roomiemeal_pantry_items_v2",
+  MEAL_HISTORY: "roomiemeal_meal_history_v2",
+  POLL: "roomiemeal_active_poll_v2",
+  DARK_MODE: "roomiemeal_dark_mode_v2",
 };
 
 const HouseholdContext = createContext<HouseholdContextType | undefined>(undefined);
 
 export function HouseholdProvider({ children }: { children: React.ReactNode }) {
-  const [householdName, setHouseholdName] = useState<string>("79 Maple Street Kitchen");
+  const [householdName, setHouseholdName] = useState<string>("My Kitchen");
   const [roommates, setRoommates] = useState<Roommate[]>(DEFAULT_ROOMMATES);
-  const [activeRoommateId, setActiveRoommateId] = useState<string>("omshree-04");
-  const [favorites, setFavorites] = useState<string[]>(["chickpea-curry", "fajita-chicken-burrito-bowl", "chipotle-black-bean-tacos"]);
-  const [weeklyPlan, setWeeklyPlan] = useState<MealPlanWeek>({
-    "2026-10-05": { dinner: "chickpea-curry" },
-    "2026-10-06": { dinner: "chipotle-black-bean-tacos" },
-    "2026-10-07": { dinner: "tuscan-white-bean-skillet" },
-    "2026-10-08": { dinner: "sheet-pan-fajitas" },
-  });
-  const [tonightMealId, setTonightMealId] = useState<string | null>("chickpea-curry");
+  const [activeRoommateId, setActiveRoommateId] = useState<string>("");
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [weeklyPlan, setWeeklyPlan] = useState<MealPlanWeek>({});
+  const [tonightMealId, setTonightMealId] = useState<string | null>(null);
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>(DEFAULT_SHOPPING);
   const [pantryItems, setPantryItems] = useState<PantryItem[]>(DEFAULT_PANTRY);
-  const [mealHistory, setMealHistory] = useState<MealHistoryRecord[]>([
-    {
-      id: "h1",
-      mealId: "creamy-garlic-pasta",
-      mealName: "Creamy Garlic Parmesan Pasta",
-      cookedAt: "2026-10-01T19:30:00.000Z",
-      servingsCooked: 4,
-      rating: 5,
-      notes: "Made with oat cream for Maya - tasted incredible!"
-    },
-    {
-      id: "h2",
-      mealId: "veggie-fried-rice",
-      mealName: "Classic 10-Minute Rainbow Fried Rice",
-      cookedAt: "2026-09-28T20:00:00.000Z",
-      servingsCooked: 4,
-      rating: 4
-    }
-  ]);
-  const [activePoll, setActivePoll] = useState<MealVotePoll | null>({
-    id: "poll-tonight",
-    createdAt: "2026-10-03T16:00:00Z",
-    active: true,
-    candidateMealIds: ["chickpea-curry", "chipotle-black-bean-tacos", "tuscan-white-bean-skillet"],
-    votes: {
-      "alex-01": "chipotle-black-bean-tacos",
-      "maya-02": "chickpea-curry",
-      "sam-03": "chickpea-curry",
-      "omshree-04": "chickpea-curry",
-    }
-  });
+  const [mealHistory, setMealHistory] = useState<MealHistoryRecord[]>([]);
+  const [activePoll, setActivePoll] = useState<MealVotePoll | null>(null);
 
-  const [timers, setTimers] = useState<CookingTimer[]>([
-    {
-      id: "t1",
-      label: "Basmati Rice Simmer",
-      durationSeconds: 15 * 60,
-      remainingSeconds: 15 * 60,
-      isRunning: false,
-      isFinished: false,
-    },
-    {
-      id: "t2",
-      label: "Curry Spinach Wilt",
-      durationSeconds: 3 * 60,
-      remainingSeconds: 3 * 60,
-      isRunning: false,
-      isFinished: false,
-    }
-  ]);
+  const [timers, setTimers] = useState<CookingTimer[]>([]);
 
   const [activeCookingMeal, setActiveCookingMeal] = useState<Meal | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -667,33 +497,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
     setTimers((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const resetToDemoData = () => {
-    setHouseholdName("79 Maple Street Kitchen");
-    setRoommates(DEFAULT_ROOMMATES);
-    setActiveRoommateId("omshree-04");
-    setFavorites(["chickpea-curry", "fajita-chicken-burrito-bowl", "chipotle-black-bean-tacos"]);
-    setWeeklyPlan({
-      "2026-10-05": { dinner: "chickpea-curry" },
-      "2026-10-06": { dinner: "chipotle-black-bean-tacos" },
-      "2026-10-07": { dinner: "tuscan-white-bean-skillet" },
-      "2026-10-08": { dinner: "sheet-pan-fajitas" },
-    });
-    setTonightMealId("chickpea-curry");
-    setShoppingList(DEFAULT_SHOPPING);
-    setPantryItems(DEFAULT_PANTRY);
-    setMealHistory([
-      {
-        id: "h1",
-        mealId: "creamy-garlic-pasta",
-        mealName: "Creamy Garlic Parmesan Pasta",
-        cookedAt: "2026-10-01T19:30:00.000Z",
-        servingsCooked: 4,
-        rating: 5,
-        notes: "Made with oat cream for Maya - tasted incredible!"
-      }
-    ]);
-  };
-
+  
   return (
     <HouseholdContext.Provider
       value={{
@@ -742,8 +546,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
         darkMode,
         toggleDarkMode,
         isOffline,
-        resetToDemoData,
-      }}
+              }}
     >
       {children}
     </HouseholdContext.Provider>

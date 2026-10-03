@@ -38,7 +38,6 @@ export function Navbar({
     roommates,
     activeRoommate,
     setActiveRoommateId,
-    resetToDemoData,
     timers,
   } = useHousehold();
 
@@ -214,18 +213,7 @@ export function Navbar({
               <span>{label}</span>
             </button>
           ))}
-          <div className="pt-2">
-            <button
-              onClick={() => {
-                resetToDemoData();
-                setShowMobileMenu(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-stone-500 bg-app-bg border border-app-border rounded-xl"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset to Demo Data</span>
-            </button>
-          </div>
+          
         </div>
       )}
     </header>
