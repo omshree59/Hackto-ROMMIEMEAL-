@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { useHousehold } from "@/context/HouseholdContext";
@@ -149,6 +149,21 @@ export function Sidebar({
           <p className="text-[10px] leading-tight">
             Allergy reminder: Always check physical labels before cooking.
           </p>
+        </div>
+
+        {/* GitHub Star Link */}
+        <div className="pt-2">
+          <a
+            href="https://github.com/your-username/roomiemeal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-app-surface border border-app-border text-stone-300 hover:text-white hover:bg-app-elevated transition-colors text-xs font-semibold relative z-30"
+            style={{ pointerEvents: 'auto' }}
+          >
+            <Github className="w-4 h-4" />
+            <span>Star on GitHub</span>
+          </a>
+          <p className="text-[9px] text-stone-500 text-center mt-2 font-medium">Built with ♥️ for roommates</p>
         </div>
       </div>
     </aside>
