@@ -63,7 +63,7 @@ export function Sidebar({
   ];
 
   return (
-    <aside className="w-[250px] shrink-0 hidden lg:flex flex-col sticky top-16 h-[calc(100vh-4rem)] border-r border-app-border bg-app-bg text-stone-300">
+    <aside className="w-[250px] shrink-0 hidden lg:flex flex-col sticky top-16 h-[calc(100vh-4rem)] border-r border-app-border bg-app-surface/30 backdrop-blur-md text-stone-300">
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8">
         
         {/* Categories */}

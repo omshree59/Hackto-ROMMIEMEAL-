@@ -57,15 +57,21 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-app-bg text-stone-100 transition-colors">
-      {/* Top Navbar */}
-      <Navbar
-        currentView={currentView}
-        setCurrentView={setCurrentView}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        onOpenVoting={() => setIsVotingOpen(true)}
-        onAddRoommate={() => setCurrentView("roommates")}
-      />
+    <div className="min-h-screen flex flex-col bg-app-bg text-stone-100 transition-colors relative overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-app-orange/5 blur-[120px] animate-blob pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-app-yellow/5 blur-[120px] animate-blob pointer-events-none" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-app-green/5 blur-[120px] animate-blob pointer-events-none" style={{ animationDelay: '4s' }}></div>
+
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Top Navbar */}
+        <Navbar
+          currentView={currentView}
+          setCurrentView={setCurrentView}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenVoting={() => setIsVotingOpen(true)}
+          onAddRoommate={() => setCurrentView("roommates")}
+        />
 
       {/* Main Layout Area */}
       {currentView === "landing" ? (
@@ -172,6 +178,7 @@ export default function Home() {
         isOpen={isTimersOpen}
         onClose={() => setIsTimersOpen(false)}
       />
+      </div>
     </div>
   );
 }

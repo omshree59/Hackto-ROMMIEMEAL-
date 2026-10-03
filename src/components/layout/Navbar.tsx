@@ -46,7 +46,7 @@ export function Navbar({
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-app-border bg-app-bg/95 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-40 w-full border-b border-app-border bg-app-surface/60 backdrop-blur-xl transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <button
@@ -60,9 +60,6 @@ export function Navbar({
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg text-stone-100 tracking-tight">
                   RoomieMeal
-                </span>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-app-green/10 text-app-green border border-app-green/20">
-                  Offline-First
                 </span>
               </div>
               <p className="text-[11px] text-stone-500 -mt-0.5 hidden sm:block">
