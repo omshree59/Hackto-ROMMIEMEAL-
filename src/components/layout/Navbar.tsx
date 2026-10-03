@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { useHousehold } from "@/context/HouseholdContext";
@@ -53,9 +53,8 @@ export function Navbar({
             onClick={() => setCurrentView("dashboard")}
             className="flex items-center gap-3 group text-left focus:outline-none"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-app-orange to-app-yellow flex items-center justify-center text-white shadow-md shadow-app-orange/20 group-hover:scale-105 transition-transform relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
-              <UtensilsCrossed className="w-5 h-5 relative z-10" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md shadow-app-orange/20 group-hover:scale-105 transition-transform relative overflow-hidden">
+              <img src="/logo.jpg" alt="RoomieMeal" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center gap-2">
