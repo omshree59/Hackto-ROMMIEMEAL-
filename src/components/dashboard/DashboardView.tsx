@@ -113,25 +113,39 @@ export function DashboardView({
             </span>
           </div>
           <div className="space-y-4">
-            {roommates.map((r) => (
-              <div key={r.id} className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-app-surface border border-app-border flex items-center justify-center text-xl shrink-0 shadow-sm">
-                  {r.avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-stone-200 truncate">{r.name}</p>
-                  <p className="text-[11px] text-stone-400 mt-0.5 leading-tight">
-                    {r.allergies.length > 0
-                      ? <span className="text-app-red font-medium">Allergies: {r.allergies.join(", ")}</span>
-                      : r.intolerances.length > 0
-                      ? <span className="text-app-yellow font-medium">Intolerances: {r.intolerances.join(", ")}</span>
-                      : r.preferences.length > 0
-                      ? <span>Diet: {r.preferences.join(", ")}</span>
-                      : "No listed restrictions"}
-                  </p>
-                </div>
+            {roommates.length === 0 ? (
+              <div className="text-center py-6 space-y-3">
+                <Users className="w-8 h-8 text-stone-500 mx-auto" />
+                <p className="text-xs text-stone-400">No roommates registered yet.</p>
+                <button
+                  type="button"
+                  onClick={() => onNavigate("roommates")}
+                  className="px-4 py-2 rounded-xl bg-app-orange/10 text-app-orange border border-app-orange/20 text-xs font-semibold hover:bg-app-orange/20 transition-colors"
+                >
+                  + Add First Roommate
+                </button>
               </div>
-            ))}
+            ) : (
+              roommates.map((r) => (
+                <div key={r.id} className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-app-surface border border-app-border flex items-center justify-center text-xl shrink-0 shadow-sm">
+                    {r.avatar}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-stone-200 truncate">{r.name}</p>
+                    <p className="text-[11px] text-stone-400 mt-0.5 leading-tight">
+                      {r.allergies.length > 0
+                        ? <span className="text-app-red font-medium">Allergies: {r.allergies.join(", ")}</span>
+                        : r.intolerances.length > 0
+                        ? <span className="text-app-yellow font-medium">Intolerances: {r.intolerances.join(", ")}</span>
+                        : r.preferences.length > 0
+                        ? <span>Diet: {r.preferences.join(", ")}</span>
+                        : "No listed restrictions"}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

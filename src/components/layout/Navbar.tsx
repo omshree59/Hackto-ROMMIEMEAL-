@@ -5,7 +5,6 @@ import { useHousehold } from "@/context/HouseholdContext";
 import {
   UtensilsCrossed,
   Search,
-  RotateCcw,
   ChevronDown,
   UserCheck,
   Plus,
@@ -17,6 +16,8 @@ import {
   ShoppingBag,
   Users,
   LayoutDashboard,
+  Refrigerator,
+  BookmarkCheck,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -71,7 +72,7 @@ export function Navbar({
         <div className="flex items-center gap-3 flex-1 justify-end">
           <button
             onClick={onOpenSearch}
-            className="hidden lg:flex items-center justify-between w-64 px-4 py-2 bg-app-surface hover:bg-app-elevated border border-app-border rounded-xl text-sm text-stone-400 transition-colors"
+            className="hidden md:flex items-center justify-between w-64 px-4 py-2 bg-app-surface hover:bg-app-elevated border border-app-border rounded-xl text-sm text-stone-400 transition-colors"
           >
             <div className="flex items-center gap-2">
               <Search className="w-4 h-4 text-stone-500" />
@@ -167,21 +168,8 @@ export function Navbar({
           </button>
 
           <button
-            onClick={() => {
-              if (confirm("Reset to default demo data for Alex, Maya, Sam, and Omshree?")) {
-                resetToDemoData();
-              }
-            }}
-            className="hidden lg:flex items-center gap-1 px-2.5 py-1 text-[11px] text-stone-500 hover:text-stone-200 hover:bg-app-surface rounded-lg transition-colors"
-            title="Reset to default mock household"
-          >
-            <RotateCcw className="w-3 h-3" />
-            <span>Reset Demo</span>
-          </button>
-
-          <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="lg:hidden p-2 text-stone-300 hover:bg-app-surface rounded-xl"
+            className="md:hidden p-2 text-stone-300 hover:bg-app-surface rounded-xl"
           >
             {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -189,12 +177,14 @@ export function Navbar({
       </div>
 
       {showMobileMenu && (
-        <div className="lg:hidden border-t border-app-border bg-app-surface px-4 pt-2 pb-4 space-y-1 shadow-lg">
+        <div className="md:hidden border-t border-app-border bg-app-surface px-4 pt-2 pb-4 space-y-1 shadow-lg">
           {[
             { id: "dashboard", label: "Kitchen Dashboard", Icon: LayoutDashboard },
             { id: "discover", label: "Browse Meals", Icon: Search },
             { id: "planner", label: "Weekly Planner", Icon: Calendar },
             { id: "shopping", label: "Shopping List", Icon: ShoppingBag },
+            { id: "pantry", label: "Pantry Inventory", Icon: Refrigerator },
+            { id: "favorites", label: "Favorites & History", Icon: BookmarkCheck },
             { id: "roommates", label: "Household Profiles", Icon: Users },
           ].map(({ id, label, Icon }) => (
             <button
@@ -213,7 +203,6 @@ export function Navbar({
               <span>{label}</span>
             </button>
           ))}
-          
         </div>
       )}
     </header>

@@ -158,8 +158,29 @@ export function RoommatesView() {
       </div>
 
       {/* Roommates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {roommates.map((rm) => {
+      {roommates.length === 0 ? (
+        <div className="rounded-3xl p-12 bg-app-surface border border-app-border text-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-app-elevated border border-app-border flex items-center justify-center text-3xl mx-auto shadow-sm">
+            🥑
+          </div>
+          <div className="space-y-1 max-w-md mx-auto">
+            <h3 className="font-extrabold text-lg text-stone-200">No Roommates Yet</h3>
+            <p className="text-xs text-stone-400">
+              Add the people in your household with their dietary restrictions and allergies so RoomieMeal can automatically check meal compatibility.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-app-orange text-app-bg font-bold text-xs shadow-md shadow-app-orange/20 hover:bg-[#ff991f] transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Your First Roommate</span>
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {roommates.map((rm) => {
           const isActive = activeRoommate?.id === rm.id;
 
           return (
@@ -335,6 +356,7 @@ export function RoommatesView() {
           );
         })}
       </div>
+      )}
 
       {/* CREATE / EDIT MODAL */}
       {(isCreating || editingRoommate) && (

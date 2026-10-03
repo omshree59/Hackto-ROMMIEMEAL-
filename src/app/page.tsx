@@ -93,7 +93,7 @@ export default function Home() {
           />
 
           {/* Primary View Container */}
-          <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 lg:ml-[250px] min-w-0 pb-24 lg:pb-8 relative z-10 pointer-events-auto">
+          <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 md:ml-[250px] min-w-0 pb-24 md:pb-8 relative z-10">
             <div className="max-w-5xl mx-auto">
               {currentView === "dashboard" && (
                 <DashboardView
