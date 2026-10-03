@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { useHousehold } from "@/context/HouseholdContext";
@@ -11,7 +11,8 @@ import {
   Users,
   Timer,
   BookmarkCheck,
-  Info
+  Info,
+  Github
 } from "lucide-react";
 
 interface SidebarProps {
@@ -63,8 +64,8 @@ export function Sidebar({
   ];
 
   return (
-    <aside className="w-[250px] shrink-0 hidden lg:flex flex-col sticky top-16 h-[calc(100vh-4rem)] border-r border-app-border bg-app-surface/30 backdrop-blur-md text-stone-300">
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8">
+    <aside className="w-[250px] shrink-0 hidden lg:flex flex-col fixed left-0 top-16 bottom-0 border-r border-app-border bg-app-surface/60 backdrop-blur-md text-stone-300 z-30">
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 relative z-20">
         
         {/* Categories */}
         {categories.map((category) => (
@@ -82,8 +83,9 @@ export function Sidebar({
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all ${
                     isActive
                       ? "bg-app-elevated text-white"
-                      : "text-stone-400 hover:text-stone-200 hover:bg-app-surface"
+                      : "text-stone-400 hover:text-stone-200 hover:bg-app-surface relative z-30"
                   }`}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
@@ -113,11 +115,12 @@ export function Sidebar({
         ))}
       </div>
 
-      <div className="p-4 space-y-4 bg-app-bg border-t border-app-border">
+      <div className="p-4 space-y-4 bg-transparent border-t border-app-border relative z-20">
         {/* Quick Timers Widget in Sidebar */}
         <button
           onClick={onOpenTimers}
-          className="w-full flex items-center justify-between p-3 rounded-xl bg-app-surface border border-app-border hover:bg-app-elevated transition-colors text-left"
+          className="w-full flex items-center justify-between p-3 rounded-xl bg-app-surface border border-app-border hover:bg-app-elevated transition-colors text-left relative z-30"
+          style={{ pointerEvents: 'auto' }}
         >
           <div className="flex items-center gap-2.5">
             <Timer
@@ -141,7 +144,7 @@ export function Sidebar({
         </button>
 
         {/* Allergy Reminder */}
-        <div className="p-3 rounded-xl bg-app-surface border border-app-border flex gap-2 text-stone-400">
+        <div className="p-3 rounded-xl bg-app-surface/50 border border-app-border flex gap-2 text-stone-400">
           <Info className="w-4 h-4 text-stone-500 shrink-0" />
           <p className="text-[10px] leading-tight">
             Allergy reminder: Always check physical labels before cooking.
