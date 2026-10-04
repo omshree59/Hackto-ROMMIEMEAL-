@@ -26,6 +26,8 @@ export interface HouseholdContextType {
 
   // Meals Database
   meals: Meal[];
+  addCustomMeal: (meal: Omit<Meal, "id">) => void;
+  deleteCustomMeal: (id: string) => void;
   favorites: string[]; // mealId[]
   toggleFavorite: (mealId: string) => void;
   isFavorite: (mealId: string) => boolean;
@@ -101,6 +103,7 @@ const STORAGE_KEYS = {
   MEAL_HISTORY: "roomiemeal_meal_history_v2",
   POLL: "roomiemeal_active_poll_v2",
   DARK_MODE: "roomiemeal_dark_mode_v2",
+  CUSTOM_MEALS: "roomiemeal_custom_meals_v2",
 };
 
 const HouseholdContext = createContext<HouseholdContextType | undefined>(undefined);
@@ -108,6 +111,7 @@ const HouseholdContext = createContext<HouseholdContextType | undefined>(undefin
 export function HouseholdProvider({ children }: { children: React.ReactNode }) {
   const [householdName, setHouseholdName] = useState<string>("My Kitchen");
   const [roommates, setRoommates] = useState<Roommate[]>(DEFAULT_ROOMMATES);
+  const [customMeals, setCustomMeals] = useState<Meal[]>([]);
   const [activeRoommateId, setActiveRoommateId] = useState<string>("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [weeklyPlan, setWeeklyPlan] = useState<MealPlanWeek>({});
@@ -157,6 +161,9 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
       const savedPoll = localStorage.getItem(STORAGE_KEYS.POLL);
       if (savedPoll) setActivePoll(JSON.parse(savedPoll));
 
+      const savedCustomMeals = localStorage.getItem(STORAGE_KEYS.CUSTOM_MEALS);
+      if (savedCustomMeals) setCustomMeals(JSON.parse(savedCustomMeals));
+
       const savedDark = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
       if (savedDark !== null) {
         const isDark = JSON.parse(savedDark);
@@ -204,6 +211,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.MEAL_HISTORY, JSON.stringify(mealHistory));
       if (activePoll) localStorage.setItem(STORAGE_KEYS.POLL, JSON.stringify(activePoll));
       else localStorage.removeItem(STORAGE_KEYS.POLL);
+      localStorage.setItem(STORAGE_KEYS.CUSTOM_MEALS, JSON.stringify(customMeals));
       localStorage.setItem(STORAGE_KEYS.DARK_MODE, JSON.stringify(darkMode));
     } catch (e) {
       console.warn("Failed saving to localStorage", e);
@@ -221,6 +229,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
     mealHistory,
     activePoll,
     darkMode,
+    customMeals,
   ]);
 
   // Timers countdown interval
@@ -400,7 +409,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
   };
 
   const recordMealCooked = (mealId: string, servings = 4, notes?: string) => {
-    const meal = MEALS_DATABASE.find((m) => m.id === mealId);
+    const meal = allMeals.find((m) => m.id === mealId);
     if (!meal) return;
     const record: MealHistoryRecord = {
       id: `hist-${Date.now()}`,
@@ -413,6 +422,25 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
     };
     setMealHistory((prev) => [record, ...prev]);
     setTonightMealId(mealId);
+
+    // Auto-deduct matching pantry items when a meal is cooked
+    setPantryItems((prev) =>
+      prev
+        .map((p) => {
+          const matchesMealIng = meal.ingredients.some(
+            (ing) =>
+              ing.name.toLowerCase().includes(p.name.toLowerCase()) ||
+              p.name.toLowerCase().includes(ing.name.toLowerCase())
+          );
+          if (matchesMealIng) {
+            const currentQty = parseFloat(p.quantity) || 1;
+            const newQty = Math.max(0, currentQty - 1);
+            return { ...p, quantity: newQty.toString() };
+          }
+          return p;
+        })
+        .filter((p) => parseFloat(p.quantity) > 0)
+    );
   };
 
   const startVotingPoll = (candidateMealIds: string[]) => {
@@ -497,7 +525,20 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
     setTimers((prev) => prev.filter((t) => t.id !== id));
   };
 
-  
+  const addCustomMeal = (newMealData: Omit<Meal, "id">) => {
+    const newMeal: Meal = {
+      ...newMealData,
+      id: `custom-${Date.now()}`,
+    };
+    setCustomMeals((prev) => [newMeal, ...prev]);
+  };
+
+  const deleteCustomMeal = (id: string) => {
+    setCustomMeals((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const allMeals = [...customMeals, ...MEALS_DATABASE];
+
   return (
     <HouseholdContext.Provider
       value={{
@@ -509,7 +550,9 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
         addRoommate,
         updateRoommate,
         deleteRoommate,
-        meals: MEALS_DATABASE,
+        meals: allMeals,
+        addCustomMeal,
+        deleteCustomMeal,
         favorites,
         toggleFavorite,
         isFavorite,

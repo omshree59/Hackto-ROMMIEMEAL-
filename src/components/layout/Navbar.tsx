@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHousehold } from "@/context/HouseholdContext";
 import {
   UtensilsCrossed,
@@ -44,6 +44,13 @@ export function Navbar({
 
   const [showRoommateMenu, setShowRoommateMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsMac(/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform || navigator.userAgent));
+    }
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-app-border bg-app-surface/60 backdrop-blur-xl transition-colors">
@@ -78,8 +85,8 @@ export function Navbar({
               <Search className="w-4 h-4 text-stone-500" />
               <span>Search recipes...</span>
             </div>
-            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-stone-500 bg-app-bg border border-app-border rounded uppercase">
-              <span className="text-xs">⌘</span> K
+            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-stone-400 bg-app-bg border border-app-border rounded font-mono">
+              {isMac ? "⌘ K" : "Ctrl+K"}
             </kbd>
           </button>
 

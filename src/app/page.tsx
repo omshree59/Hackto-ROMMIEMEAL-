@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHousehold } from "@/context/HouseholdContext";
 import { Meal } from "@/types";
 
@@ -55,6 +55,25 @@ export default function Home() {
     setMealForDay(today, "dinner", meal.id);
     setCurrentView("planner");
   };
+
+  // Global Keyboard Shortcuts (Cmd+K / Ctrl+K for search, Escape to close modals)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+      if (e.key === "Escape") {
+        setIsSearchOpen(false);
+        setIsWhatCanWeEatOpen(false);
+        setIsVotingOpen(false);
+        setIsTimersOpen(false);
+        setSelectedMealForDetail(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-app-bg text-stone-100 transition-colors relative overflow-hidden">

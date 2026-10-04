@@ -16,7 +16,9 @@ import {
   ShieldCheck,
   Flame,
   Check,
+  Plus,
 } from "lucide-react";
+import { CreateMealModal } from "@/components/meals/CreateMealModal";
 
 interface MealDiscoveryViewProps {
   onSelectMeal: (meal: Meal) => void;
@@ -32,6 +34,7 @@ export function MealDiscoveryView({ onSelectMeal }: MealDiscoveryViewProps) {
   const [maxTime, setMaxTime] = useState<number>(60);
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [pantryReadyOnly, setPantryReadyOnly] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const filteredMeals = useMemo(() => {
     return meals.filter((meal) => {
@@ -110,19 +113,30 @@ export function MealDiscoveryView({ onSelectMeal }: MealDiscoveryViewProps) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
-          <span className="font-semibold text-stone-600">
-            Showing {filteredMeals.length} of {meals.length} meals
-          </span>
-          {(searchQuery || selectedCuisine !== "All" || selectedDietary !== "All" || selectedSafetyFilter !== "all" || onlyFavorites || pantryReadyOnly) && (
-            <button
-              onClick={handleResetFilters}
-              className="px-2.5 py-1 rounded-lg text-app-orange hover:bg-app-elevated font-semibold transition-colors flex items-center gap-1"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>Reset</span>
-            </button>
-          )}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+            className="px-4 py-2.5 rounded-2xl bg-app-orange text-app-bg font-bold text-xs shadow-md shadow-app-orange/20 hover:bg-[#ff991f] transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Recipe</span>
+          </button>
+
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-semibold text-stone-600 hidden sm:inline">
+              Showing {filteredMeals.length} of {meals.length} meals
+            </span>
+            {(searchQuery || selectedCuisine !== "All" || selectedDietary !== "All" || selectedSafetyFilter !== "all" || onlyFavorites || pantryReadyOnly) && (
+              <button
+                onClick={handleResetFilters}
+                className="px-2.5 py-1 rounded-lg text-app-orange hover:bg-app-elevated font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -275,6 +289,15 @@ export function MealDiscoveryView({ onSelectMeal }: MealDiscoveryViewProps) {
           ))}
         </div>
       )}
+
+      {/* Add Custom Recipe Modal */}
+      <CreateMealModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onMealCreated={(newMeal) => {
+          onSelectMeal(newMeal);
+        }}
+      />
     </div>
   );
 }

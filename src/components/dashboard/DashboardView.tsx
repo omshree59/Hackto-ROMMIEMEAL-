@@ -158,53 +158,72 @@ export function DashboardView({
           </h2>
         </div>
         
-        <div className="rounded-[32px] p-6 sm:p-8 bg-app-surface border border-app-border relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8 group">
-          <div className="absolute inset-0 bg-gradient-to-r from-app-orange/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          
-          <div className="space-y-4 max-w-2xl relative z-10">
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              {tonightMeal.name}
-            </h3>
+        {tonightMeal ? (
+          <div className="rounded-[32px] p-6 sm:p-8 bg-app-surface border border-app-border relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8 group">
+            <div className="absolute inset-0 bg-gradient-to-r from-app-orange/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            <div className="space-y-4 max-w-2xl relative z-10">
+              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                {tonightMeal.name}
+              </h3>
 
-            <p className="text-sm text-stone-400 leading-relaxed">
-              {tonightMeal.description}
-            </p>
+              <p className="text-sm text-stone-400 leading-relaxed">
+                {tonightMeal.description}
+              </p>
 
-            <div className="flex flex-wrap items-center gap-4 text-[11px] font-medium text-stone-400 pt-2">
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-app-elevated border border-app-border">
-                <Clock className="w-3.5 h-3.5 text-app-orange" />
-                {tonightMeal.cookTime} mins cook time
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-app-elevated border border-app-border">
-                <Users className="w-3.5 h-3.5 text-app-green" />
-                Serves {tonightMeal.servings}
-              </span>
-              <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-app-elevated border border-app-border ${
-                tonightReport.status === "green" ? "text-app-green" :
-                tonightReport.status === "yellow" ? "text-app-yellow" : "text-app-red"
-              }`}>
-                {tonightReport.status === "green" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
-                {tonightReport.summaryMessage}
-              </span>
+              <div className="flex flex-wrap items-center gap-4 text-[11px] font-medium text-stone-400 pt-2">
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-app-elevated border border-app-border">
+                  <Clock className="w-3.5 h-3.5 text-app-orange" />
+                  {tonightMeal.cookTime} mins cook time
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-app-elevated border border-app-border">
+                  <Users className="w-3.5 h-3.5 text-app-green" />
+                  Serves {tonightMeal.servings}
+                </span>
+                <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-app-elevated border border-app-border ${
+                  tonightReport.status === "green" ? "text-app-green" :
+                  tonightReport.status === "yellow" ? "text-app-yellow" : "text-app-red"
+                }`}>
+                  {tonightReport.status === "green" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                  {tonightReport.summaryMessage}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 shrink-0 relative z-10">
+              <button
+                type="button"
+                onClick={() => setActiveCookingMeal(tonightMeal)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-app-orange text-app-bg font-bold text-sm shadow-md hover:bg-[#ff991f] transition-colors cursor-pointer"
+              >
+                <ChefHat className="w-5 h-5" />
+                <span>Start Cooking</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onSelectMeal(tonightMeal)}
+                className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-app-elevated hover:bg-stone-800 border border-app-border text-stone-200 font-bold text-sm transition-colors text-center cursor-pointer"
+              >
+                View Full Recipe
+              </button>
             </div>
           </div>
-
-          <div className="flex flex-col gap-3 shrink-0 relative z-10">
+        ) : (
+          <div className="rounded-[32px] p-8 bg-app-surface border border-app-border text-center space-y-3">
+            <UtensilsCrossed className="w-8 h-8 text-stone-500 mx-auto" />
+            <h3 className="text-base font-bold text-stone-200">No dinner selected yet</h3>
+            <p className="text-xs text-stone-400 max-w-sm mx-auto">
+              Explore your recipe catalog or let the rule engine find a meal everyone can safely eat.
+            </p>
             <button
-              onClick={() => setActiveCookingMeal(tonightMeal)}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-app-orange text-app-bg font-bold text-sm shadow-md hover:bg-[#ff991f] transition-colors"
+              type="button"
+              onClick={onOpenWhatCanWeEat}
+              className="px-6 py-2.5 rounded-2xl bg-app-orange text-app-bg font-bold text-xs shadow-md shadow-app-orange/20 cursor-pointer"
             >
-              <ChefHat className="w-5 h-5" />
-              <span>Start Cooking</span>
-            </button>
-            <button
-              onClick={() => onSelectMeal(tonightMeal)}
-              className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-app-elevated hover:bg-stone-800 border border-app-border text-stone-200 font-bold text-sm transition-colors text-center"
-            >
-              View Full Recipe
+              Find a Meal
             </button>
           </div>
-        </div>
+        )}
       </section>
 
       {/* 3. QUICK ACTION DASHBOARD CARDS */}

@@ -69,10 +69,26 @@ export function findSuggestedSubstitution(ingredientName: string, allergenTag?: 
  */
 export function evaluateMealCompatibility(
   meal: Meal,
-  roommates: Roommate[],
+  roommates: Roommate[] = [],
   pantryItems: PantryItem[] = [],
   mealHistory: MealHistoryRecord[] = []
 ): CompatibilityReport {
+  if (!meal || !meal.id || !meal.ingredients) {
+    return {
+      mealId: meal?.id || "",
+      status: "green",
+      matchScore: 100,
+      scoreBreakdown: { restrictions: 100, preferences: 100, pantryMatch: 0, recencyVariety: 100 },
+      allergyConflicts: [],
+      intoleranceConflicts: [],
+      dislikeConflicts: [],
+      dietaryConflicts: [],
+      summaryMessage: "No listed conflicts detected",
+      canBeModified: false,
+      modifiedSafetyNote: "Always check physical labels before preparing.",
+    };
+  }
+
   const allergyConflicts: ConflictItem[] = [];
   const intoleranceConflicts: ConflictItem[] = [];
   const dislikeConflicts: ConflictItem[] = [];

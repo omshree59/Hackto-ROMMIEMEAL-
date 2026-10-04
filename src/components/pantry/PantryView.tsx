@@ -33,13 +33,7 @@ export function PantryView({ onSelectMeal }: PantryViewProps) {
   } = useHousehold();
 
   // Multi-select for "What's in the fridge?"
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([
-    "Chickpeas",
-    "Coconut Milk",
-    "Garlic",
-    "Onions",
-    "Baby Spinach",
-  ]);
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
 
   const [activeTab, setActiveTab] = useState<"fridge" | "inventory">("fridge");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -149,27 +143,41 @@ export function PantryView({ onSelectMeal }: PantryViewProps) {
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              {pantryItems.map((item) => {
-                const isSelected = selectedIngredients.some(
-                  (i) => i.toLowerCase() === item.name.toLowerCase()
-                );
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => toggleIngredientSelection(item.name)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                      isSelected
-                        ? "bg-app-orange text-white shadow-sm"
-                        : "bg-app-bg text-stone-300 hover:bg-app-elevated"
-                    }`}
-                  >
-                    <span>{isSelected ? "✓" : "+"}</span>
-                    <span>{item.name}</span>
-                  </button>
-                );
-              })}
-            </div>
+            {pantryItems.length === 0 ? (
+              <div className="py-4 text-center space-y-2">
+                <p className="text-xs text-stone-400">Your kitchen inventory is currently empty.</p>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(true)}
+                  className="px-4 py-2 rounded-xl bg-app-orange text-app-bg text-xs font-bold shadow-md shadow-app-orange/20 cursor-pointer"
+                >
+                  + Add Item to Pantry
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2">
+                {pantryItems.map((item) => {
+                  const isSelected = selectedIngredients.some(
+                    (i) => i.toLowerCase() === item.name.toLowerCase()
+                  );
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => toggleIngredientSelection(item.name)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        isSelected
+                          ? "bg-app-orange text-app-bg shadow-sm font-bold"
+                          : "bg-app-bg text-stone-300 hover:bg-app-elevated"
+                      }`}
+                    >
+                      <span>{isSelected ? "✓" : "+"}</span>
+                      <span>{item.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Matches Output List */}

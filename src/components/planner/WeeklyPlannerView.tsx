@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Meal } from "@/types";
 import { useHousehold } from "@/context/HouseholdContext";
 import { evaluateMealCompatibility } from "@/lib/rulesEngine";
@@ -10,30 +10,17 @@ import {
   Plus,
   Trash2,
   ShoppingBag,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
-  Clock,
   RotateCcw,
-  CheckCircle2,
-  ChefHat,
   X,
+  Calendar,
 } from "lucide-react";
 
 interface WeeklyPlannerViewProps {
   onSelectMeal: (meal: Meal) => void;
   onNavigateToShopping: () => void;
 }
-
-const DAYS_OF_WEEK = [
-  { key: "2026-10-05", label: "Monday", short: "Mon", dayNum: "05" },
-  { key: "2026-10-06", label: "Tuesday", short: "Tue", dayNum: "06" },
-  { key: "2026-10-07", label: "Wednesday", short: "Wed", dayNum: "07" },
-  { key: "2026-10-08", label: "Thursday", short: "Thu", dayNum: "08" },
-  { key: "2026-10-09", label: "Friday", short: "Fri", dayNum: "09" },
-  { key: "2026-10-10", label: "Saturday", short: "Sat", dayNum: "10" },
-  { key: "2026-10-11", label: "Sunday", short: "Sun", dayNum: "11" },
-];
 
 export function WeeklyPlannerView({
   onSelectMeal,
@@ -51,12 +38,48 @@ export function WeeklyPlannerView({
     mealHistory,
   } = useHousehold();
 
+  const [weekOffset, setWeekOffset] = useState<number>(0);
+
   const [activePicker, setActivePicker] = useState<{
     dateKey: string;
     slot: "breakfast" | "lunch" | "dinner";
   } | null>(null);
 
   const [notification, setNotification] = useState<string | null>(null);
+
+  // Dynamically compute days for the selected week
+  const daysOfWeek = useMemo(() => {
+    const today = new Date();
+    // Find Monday of current week
+    const dayOfWeek = today.getDay(); // 0 is Sun, 1 is Mon...
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diffToMonday + weekOffset * 7);
+
+    const days = [];
+    const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const fullNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const todayIso = today.toISOString().split("T")[0];
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const key = d.toISOString().split("T")[0];
+      const isToday = key === todayIso;
+
+      days.push({
+        key,
+        short: dayNames[i],
+        label: fullNames[i],
+        dayNum: String(d.getDate()).padStart(2, "0"),
+        monthName: monthNames[d.getMonth()],
+        isToday,
+      });
+    }
+    return days;
+  }, [weekOffset]);
 
   const handleGenerateShopping = () => {
     generateShoppingListFromPlan();
@@ -84,21 +107,54 @@ export function WeeklyPlannerView({
             </span>
           )}
 
+          {/* Week Navigation Controls */}
+          <div className="flex items-center bg-app-surface border border-app-border rounded-2xl p-1 gap-1">
+            <button
+              type="button"
+              onClick={() => setWeekOffset((w) => w - 1)}
+              className="p-1.5 rounded-xl hover:bg-app-elevated text-stone-400 hover:text-stone-200 transition-colors"
+              title="Previous week"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setWeekOffset(0)}
+              className="px-2.5 py-1 rounded-xl text-xs font-semibold text-stone-300 hover:text-white transition-colors"
+            >
+              {weekOffset === 0
+                ? "This Week"
+                : weekOffset > 0
+                ? `+${weekOffset} Wk`
+                : `${weekOffset} Wk`}
+            </button>
+            <button
+              type="button"
+              onClick={() => setWeekOffset((w) => w + 1)}
+              className="p-1.5 rounded-xl hover:bg-app-elevated text-stone-400 hover:text-stone-200 transition-colors"
+              title="Next week"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
           <button
+            type="button"
             onClick={handleGenerateShopping}
-            className="px-4 py-2.5 rounded-2xl bg-app-orange hover:bg-app-elevated text-white text-xs font-bold shadow-md shadow-app-orange/20 transition-all flex items-center gap-2"
+            className="px-4 py-2.5 rounded-2xl bg-app-orange hover:bg-[#ff991f] text-app-bg text-xs font-bold shadow-md shadow-app-orange/20 transition-all flex items-center gap-2 cursor-pointer"
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Generate Grocery List</span>
           </button>
 
           <button
+            type="button"
             onClick={() => {
               if (confirm("Clear all planned meals for this week?")) {
                 clearEntireWeekPlan();
               }
             }}
-            className="p-2.5 rounded-2xl bg-app-bg hover:bg-app-elevated text-stone-300 transition-colors"
+            className="p-2.5 rounded-2xl bg-app-surface hover:bg-app-elevated border border-app-border text-stone-400 hover:text-stone-200 transition-colors cursor-pointer"
             title="Clear entire week"
           >
             <RotateCcw className="w-4 h-4" />
@@ -108,23 +164,32 @@ export function WeeklyPlannerView({
 
       {/* 7-Day Interactive Grid */}
       <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
-        {DAYS_OF_WEEK.map((day) => {
+        {daysOfWeek.map((day) => {
           const dayPlan = weeklyPlan[day.key] || {};
           const slots: ("breakfast" | "lunch" | "dinner")[] = ["breakfast", "lunch", "dinner"];
 
           return (
             <div
               key={day.key}
-              className="rounded-3xl p-3.5 bg-app-surface border border-app-border shadow-sm flex flex-col justify-between space-y-3"
+              className={`rounded-3xl p-3.5 bg-app-surface border shadow-sm flex flex-col justify-between space-y-3 transition-colors ${
+                day.isToday ? "border-app-orange ring-1 ring-app-orange/30" : "border-app-border"
+              }`}
             >
               {/* Day Header */}
               <div className="flex items-center justify-between pb-2 border-b border-app-border">
                 <div>
-                  <p className="text-xs font-bold text-stone-200 uppercase tracking-wider">
-                    {day.short}
-                  </p>
-                  <p className="text-[11px] text-stone-400 font-mono">
-                    Oct {day.dayNum}
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold text-stone-200 uppercase tracking-wider">
+                      {day.short}
+                    </p>
+                    {day.isToday && (
+                      <span className="px-1.5 py-0.2 rounded-md bg-app-orange text-app-bg font-extrabold text-[9px] uppercase tracking-wider">
+                        Today
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-stone-400 font-mono mt-0.5">
+                    {day.monthName} {day.dayNum}
                   </p>
                 </div>
               </div>
@@ -149,8 +214,9 @@ export function WeeklyPlannerView({
                         <span>{slot}</span>
                         {meal && (
                           <button
+                            type="button"
                             onClick={() => clearMealSlot(day.key, slot)}
-                            className="text-stone-400 hover:text-rose-500 p-0.5"
+                            className="text-stone-400 hover:text-rose-500 p-0.5 cursor-pointer"
                             title="Remove meal"
                           >
                             <Trash2 className="w-3 h-3" />
@@ -175,8 +241,9 @@ export function WeeklyPlannerView({
                         </div>
                       ) : (
                         <button
+                          type="button"
                           onClick={() => setActivePicker({ dateKey: day.key, slot })}
-                          className="w-full py-2 flex items-center justify-center gap-1 text-stone-400 hover:text-app-orange text-[11px] font-semibold transition-colors"
+                          className="w-full py-2 flex items-center justify-center gap-1 text-stone-400 hover:text-app-orange text-[11px] font-semibold transition-colors cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Assign</span>
@@ -208,8 +275,9 @@ export function WeeklyPlannerView({
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setActivePicker(null)}
-                className="p-2 rounded-full hover:bg-app-elevated"
+                className="p-2 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-app-elevated"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -222,11 +290,12 @@ export function WeeklyPlannerView({
                 return (
                   <button
                     key={meal.id}
+                    type="button"
                     onClick={() => {
                       setMealForDay(activePicker.dateKey, activePicker.slot, meal.id);
                       setActivePicker(null);
                     }}
-                    className="w-full p-3 rounded-2xl bg-app-bg border border-app-border hover:border-app-orange text-left flex items-center justify-between gap-3 transition-colors"
+                    className="w-full p-3 rounded-2xl bg-app-bg border border-app-border hover:border-app-orange text-left flex items-center justify-between gap-3 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <img
