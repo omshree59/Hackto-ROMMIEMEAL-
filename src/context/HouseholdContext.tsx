@@ -23,6 +23,8 @@ export interface HouseholdContextType {
   addRoommate: (roommate: Omit<Roommate, "id">) => void;
   updateRoommate: (id: string, updates: Partial<Roommate>) => void;
   deleteRoommate: (id: string) => void;
+  exportHouseholdData: () => void;
+  importHouseholdData: (jsonString: string) => boolean;
 
   // Meals Database
   meals: Meal[];
@@ -537,6 +539,44 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
     setCustomMeals((prev) => prev.filter((m) => m.id !== id));
   };
 
+  const exportHouseholdData = () => {
+    const data = {
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      householdName,
+      roommates,
+      customMeals,
+      weeklyPlan,
+      pantryItems,
+      shoppingList,
+      favorites,
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `roomiemeal-${householdName.toLowerCase().replace(/[^a-z0-9]/g, "-")}-backup.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importHouseholdData = (jsonString: string): boolean => {
+    try {
+      const data = JSON.parse(jsonString);
+      if (data.householdName) setHouseholdName(data.householdName);
+      if (Array.isArray(data.roommates)) setRoommates(data.roommates);
+      if (Array.isArray(data.customMeals)) setCustomMeals(data.customMeals);
+      if (data.weeklyPlan) setWeeklyPlan(data.weeklyPlan);
+      if (Array.isArray(data.pantryItems)) setPantryItems(data.pantryItems);
+      if (Array.isArray(data.shoppingList)) setShoppingList(data.shoppingList);
+      if (Array.isArray(data.favorites)) setFavorites(data.favorites);
+      return true;
+    } catch (e) {
+      console.error("Invalid household JSON backup", e);
+      return false;
+    }
+  };
+
   const allMeals = [...customMeals, ...MEALS_DATABASE];
 
   return (
@@ -550,6 +590,8 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
         addRoommate,
         updateRoommate,
         deleteRoommate,
+        exportHouseholdData,
+        importHouseholdData,
         meals: allMeals,
         addCustomMeal,
         deleteCustomMeal,

@@ -15,6 +15,10 @@ import {
   AlertTriangle,
   X,
   Check,
+  Download,
+  Upload,
+  FileJson,
+  Globe,
 } from "lucide-react";
 
 const AVATAR_OPTIONS = ["🥑", "🌱", "🍜", "🍛", "🌮", "🍕", "🥗", "🍳", "🍓", "☕", "🍣", "🥟"];
@@ -27,10 +31,34 @@ export function RoommatesView() {
     addRoommate,
     updateRoommate,
     deleteRoommate,
+    exportHouseholdData,
+    importHouseholdData,
   } = useHousehold();
 
   const [editingRoommate, setEditingRoommate] = useState<Roommate | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [dataStatus, setDataStatus] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        const success = importHouseholdData(content);
+        if (success) {
+          setDataStatus("Household data imported successfully! ✓");
+        } else {
+          setDataStatus("Failed to parse backup JSON file.");
+        }
+        setTimeout(() => setDataStatus(null), 4000);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
 
   // Form state
   const [name, setName] = useState("");
@@ -137,24 +165,67 @@ export function RoommatesView() {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2.5 rounded-2xl bg-app-orange hover:bg-[#ff991f] text-app-bg text-xs font-bold shadow-md shadow-app-orange/20 transition-all flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Roommate</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {dataStatus && (
+            <span className="text-xs font-bold text-emerald-400 animate-in fade-in">
+              {dataStatus}
+            </span>
+          )}
+
+          {/* Hidden file input for import */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".json,application/json"
+            className="hidden"
+          />
+
+          <button
+            type="button"
+            onClick={exportHouseholdData}
+            className="px-3.5 py-2 rounded-2xl bg-app-surface hover:bg-app-elevated border border-app-border text-stone-300 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+            title="Download JSON backup of your kitchen data"
+          >
+            <Download className="w-3.5 h-3.5 text-app-orange" />
+            <span>Export Data</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="px-3.5 py-2 rounded-2xl bg-app-surface hover:bg-app-elevated border border-app-border text-stone-300 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+            title="Upload and restore a household JSON backup"
+          >
+            <Upload className="w-3.5 h-3.5 text-app-green" />
+            <span>Import Data</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="px-4 py-2 rounded-2xl bg-app-orange hover:bg-[#ff991f] text-app-bg text-xs font-bold shadow-md shadow-app-orange/20 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Roommate</span>
+          </button>
+        </div>
       </div>
 
-      {/* Safety Principle Banner */}
-      <div className="p-4 rounded-2xl bg-app-surface border border-app-border text-xs text-stone-300 flex items-start gap-3">
-        <ShieldCheck className="w-5 h-5 text-app-green mt-0.5 shrink-0" />
-        <div className="space-y-0.5">
-          <p className="font-bold text-stone-200">Clear Food Boundaries</p>
-          <p className="text-stone-400 leading-relaxed">
-            RoomieMeal uses these profiles to evaluate all meals locally. Life-threatening allergies trigger red conflict alerts, while intolerances suggest plant-based modifications.
-          </p>
+      {/* Open Innovation & Data Sovereignty Banner */}
+      <div className="p-5 rounded-3xl bg-app-surface border border-app-border space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-app-orange">
+            <Globe className="w-4 h-4" />
+            <span>Open Innovation &amp; Food Safety Standard</span>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-app-green/10 text-app-green border border-app-green/20">
+            100% Client-Side Privacy
+          </span>
         </div>
+        <p className="text-xs text-stone-400 leading-relaxed">
+          RoomieMeal is built on the philosophy that <strong>open innovation matters</strong> in personal health. Food allergies, intolerances, and household diet matrices are evaluated strictly in your browser using a deterministic, transparent rules engine. No health data is uploaded to ad trackers, and your household data can be exported or imported anytime via open JSON standards.
+        </p>
       </div>
 
       {/* Roommates Grid */}
